@@ -720,7 +720,7 @@ def make_forward_base(con_mesh, parse_opacity=False, transluc_pass=False):
                 frag.add_uniform('vec4 casData[shadowmapCascades * 4 + 4]', '_cascadeData', included=True)
                 frag.add_uniform('vec3 eye', '_cameraPosition')
                 if parse_opacity:
-                    frag.write(f'svisibility = shadowTestCascade({shadowmap_sun}, {shadowmap_sun_tr}, eye, wposition + n * shadowsBias * 10, shadowsBias, opacity != 1.0);')
+                    frag.write(f'svisibility = shadowTestCascade({shadowmap_sun}, {shadowmap_sun_tr}, eye, wposition + n * shadowsBias * 10, shadowsBias, true);')
                 else:
                     frag.write(f'svisibility = shadowTestCascade({shadowmap_sun}, {shadowmap_sun_tr}, eye, wposition + n * shadowsBias * 10, shadowsBias, false);')
 
@@ -735,13 +735,12 @@ def make_forward_base(con_mesh, parse_opacity=False, transluc_pass=False):
                         vert.add_uniform('mat4 LVP', '_biasLightViewProjectionMatrix')
                         vert.write('lightPosition = LVP * vec4(wposition, 1.0);')
                     else:
-                        vert.add_out('vec4 lightPosition')
-                        vert.add_uniform('mat4 LWVP', '_biasLightWorldViewProjectionMatrixSun')
-                        vert.write('lightPosition = LWVP * spos;')
+                        frag.add_uniform('mat4 LWVP', '_biasLightWorldViewProjectionMatrixSun')
+                        frag.write('vec4 lightPosition = LWVP * vec4(wposition + n * shadowsBias * 100, 1.0);')
                 frag.write('vec3 lPos = lightPosition.xyz / lightPosition.w;')
                 frag.write('const vec2 smSize = shadowmapSize;')
                 if parse_opacity:
-                    frag.write(f'svisibility = PCF({shadowmap_sun}, {shadowmap_sun_tr}, lPos.xy, lPos.z - shadowsBias, smSize, opacity != 1.0);')
+                    frag.write(f'svisibility = PCF({shadowmap_sun}, {shadowmap_sun_tr}, lPos.xy, lPos.z - shadowsBias, smSize, true);')
                 else:
                     frag.write(f'svisibility = PCF({shadowmap_sun}, {shadowmap_sun_tr}, lPos.xy, lPos.z - shadowsBias, smSize, false);')
             if '_VoxelShadow' in wrd.world_defs:
