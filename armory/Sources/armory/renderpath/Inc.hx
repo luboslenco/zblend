@@ -672,7 +672,7 @@ class Inc {
 			t.width = 0;
 			t.height = 0;
 			t.displayp = getDisplayp();
-			t.scale = Inc.getSuperSampling();
+			//t.scale = Inc.getSuperSampling();
 			t.format = t.name == "voxels_ao" ? "R8" : "RGBA32";
 		}
 		else {
