@@ -796,7 +796,7 @@ def make_forward_base(con_mesh, parse_opacity=False, transluc_pass=False):
         frag.write('indirect += emissionCol;')
 
     if '_VoxelRefract' in wrd.world_defs and parse_opacity:
-        frag.write('if (opacity < 1.0) {')=
+        frag.write('if (opacity < 1.0) {')
         frag.write('    vec2 velocity = -textureLod(sveloc, gl_FragCoord.xy, 0.0).rg;')
         frag.write('    vec3 refraction = traceRefraction(wposition, wnormal, voxels, voxelsSDF, normalize(eye - wposition), ior, roughness, clipmaps, texCoord, velocity).rgb * voxelgiRefr;')
         frag.write('    indirect = mix(refraction, indirect, opacity);')
